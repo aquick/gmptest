@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GMPTest</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">GMP Test Application</string>
+    <string name="mpz_tests">mpz tests</string>
+    <string name="cancel">cancel</string>
+
+</resources>
