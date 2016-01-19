@@ -1,12 +1,11 @@
 package org.gmplib.test;
 
-import android.util.Log;
+//import android.util.Log;
 
 import org.gmplib.gmpjni.GMP;
 import org.gmplib.gmpjni.GMP.mpz_t;
 import org.gmplib.gmpjni.GMP.randstate_t;
 import org.gmplib.gmpjni.GMP.GMPException;
-//import java.io.IOException;
 
 public class TestUtil
 {

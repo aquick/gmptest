@@ -1,27 +1,19 @@
 package org.gmplib.test;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.gmplib.gmpjni.GMP;
 import org.gmplib.gmpjni.GMP.mpz_t;
 import org.gmplib.gmpjni.GMP.randstate_t;
 import org.gmplib.gmpjni.GMP.GMPException;
-//import java.io.IOException;
 
-public class HamDist_Task extends AsyncTask<Integer, Integer, Integer>
+public class HamDist_Task extends TaskBase implements Runnable
 {
     private static final String TAG = "HamDist_Task";
     
-    private UI uinterface;
-    private RandomNumberFile rng;
-    
-    public HamDist_Task(UI ui, RandomNumberFile rng)
+    public HamDist_Task(UI ui)
     {
-        super();
-        this.uinterface = ui;
-        this.rng = rng;
-        failmsg = null;
+        super(ui, TAG);
     }
 
     private long refmpz_hamdist(mpz_t x, mpz_t y)
@@ -150,29 +142,36 @@ public class HamDist_Task extends AsyncTask<Integer, Integer, Integer>
                 abort();
                 ***/
             }
-            if (isCancelled()) break;
+            if (Thread.interrupted()) {
+                throw new Exception("Task cancelled");
+            }
             if (i % 10 == 0) {
-                publishProgress(new Integer((int)((float)(i+1)*100.0/(float)reps)));
+                onProgressUpdate(Integer.valueOf((int)((float)(i+1)*100.0/(float)reps)));
             }
         }
     }
 
-    protected Integer doInBackground(Integer... params)
+    public void run()
     {
         int reps = 200; // 2000;
         randstate_t rands;
         long seed;
         int ret = 0;
 
+        if (!isActive()) {
+            return;
+        }
+        onPreExecute();
         try {
-            GMP.init();
             //tests_start ();
             
-            seed = rng.nextInt();
+            seed = uinterface.getSeed();
             if (seed < 0) {
                 seed = 0x100000000L + seed;
             }
-            Log.d(TAG, "seed=" + seed);
+            String s = "seed=" + seed;
+            Log.d(TAG, s);
+            uinterface.display(s);
             rands = new randstate_t(seed);
 
             if (params.length > 0) {
@@ -190,37 +189,7 @@ public class HamDist_Task extends AsyncTask<Integer, Integer, Integer>
             failmsg = e.getMessage();
             ret = -1;
         }
-        return ret;
-    }
-
-    protected void onPreExecute()
-    {
-        uinterface.display(TAG);
-    }
-
-    protected void onProgressUpdate(Integer... progress)
-    {
-        uinterface.display("progress=" + progress[0]);
-    }
-
-    protected void onPostExecute(Integer result)
-    {
-        uinterface.display("result=" + result);
-        if (result == 0) {
-            uinterface.display("PASS");
-            uinterface.nextTask();
-        } else {
-            uinterface.display(failmsg);
-            uinterface.display("FAIL");
-        }
-    }
-
-    private String failmsg;
-
-    private void dump_abort(String msg)
-        throws Exception
-    {
-        throw new Exception(msg);
+        onPostExecute(Integer.valueOf(ret));
     }
 
     private void dump_abort(String msg, mpz_t x, mpz_t y, long i, long j, long got, long want)

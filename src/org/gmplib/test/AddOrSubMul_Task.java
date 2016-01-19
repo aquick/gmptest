@@ -1,28 +1,19 @@
 package org.gmplib.test;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.gmplib.gmpjni.GMP;
 import org.gmplib.gmpjni.GMP.mpz_t;
 import org.gmplib.gmpjni.GMP.GMPException;
-import org.gmplib.gmpjni.GMP.MutableInteger;
 import org.gmplib.gmpjni.GMP.randstate_t;
-//import java.io.IOException;
 
-public class AddOrSubMul_Task extends AsyncTask<Integer, Integer, Integer> {
+public class AddOrSubMul_Task extends TaskBase implements Runnable {
 
     private static final String TAG = "AddOrSubMul_Task";
     
-    private UI uinterface;
-    private RandomNumberFile rng;
-    
-    public AddOrSubMul_Task(UI ui, RandomNumberFile rng)
+    public AddOrSubMul_Task(UI ui)
     {
-        super();
-        this.uinterface = ui;
-        this.rng = rng;
-        failmsg = null;
+        super(ui, TAG);
     }
 
 
@@ -431,30 +422,37 @@ public class AddOrSubMul_Task extends AsyncTask<Integer, Integer, Integer> {
             TestUtil.mpz_errandomb (y, rands, 32 /*BITS_PER_ULONG*/);
             check_all (w, x, y);
             check_all_inplace (w, y);
-            if (isCancelled()) break;
+            if (Thread.interrupted()) {
+                throw new Exception("Task cancelled");
+            }
             if (i % 100 == 0) {
-                publishProgress(new Integer((int)((float)(i+1)*100.0/(float)reps)));
+                onProgressUpdate(Integer.valueOf((int)((float)(i+1)*100.0/(float)reps)));
             }
         }
 
     }
 
-    protected Integer doInBackground(Integer... params)
+    public void run()
     {
         int reps = 2000;
         randstate_t rands;
         long seed;
         int ret = 0;
 
+        if (!isActive()) {
+            return;
+        }
+        onPreExecute();
         try {
-            GMP.init();
             //tests_start ();
             
-            seed = rng.nextInt();
+            seed = uinterface.getSeed();
             if (seed < 0) {
                 seed = 0x100000000L + seed;
             }
-            Log.d(TAG, "seed=" + seed);
+            String s = "seed=" + seed;
+            Log.d(TAG, s);
+            uinterface.display(s);
             rands = new randstate_t(seed);
 
             if (params.length > 0) {
@@ -474,39 +472,8 @@ public class AddOrSubMul_Task extends AsyncTask<Integer, Integer, Integer> {
             failmsg = e.getMessage();
             ret = -1;
         }
-        return ret;
+        onPostExecute(Integer.valueOf(ret));
     }
-
-    protected void onPreExecute()
-    {
-        uinterface.display(TAG);
-    }
-
-    protected void onProgressUpdate(Integer... progress)
-    {
-        uinterface.display("progress=" + progress[0]);
-    }
-
-    protected void onPostExecute(Integer result)
-    {
-        uinterface.display("result=" + result);
-        if (result == 0) {
-            uinterface.display("PASS");
-            uinterface.nextTask();
-        } else {
-            uinterface.display(failmsg);
-            uinterface.display("FAIL");
-        }
-    }
-
-    protected void onCancelled(Integer result)
-    {
-        uinterface.display("result=" + result);
-        uinterface.display(failmsg);
-        uinterface.display("FAIL");
-    }
-
-    private String failmsg;
 
     private void dump_abort(String msg, mpz_t w, mpz_t y, mpz_t want, mpz_t got)
         throws Exception

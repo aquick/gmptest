@@ -3,35 +3,76 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:weightSum="19"
     tools:context=".MainActivity" >
 
     <Button
         android:id="@+id/Button01"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/mpz_tests" />
-
+        android:layout_height="0dp"
+        android:text="@string/mpz_tests"
+        android:layout_weight="1" />
+    
     <Button
         android:id="@+id/Button02"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/cancel" />
-
+        android:layout_height="0dp"
+        android:text="@string/cancel"
+        android:layout_weight="1" />
+    
     <Button
         android:id="@+id/Button03"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/clear" />
+        android:layout_height="0dp"
+        android:text="@string/clear"
+        android:layout_weight="1" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="8" >
+
+    <ProgressBar
+        android:id="@+id/Progress01"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" >
-        
     <TextView
         android:id="@+id/TextView01"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
     </ScrollView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="8" >
+
+    <ProgressBar
+        android:id="@+id/Progress02"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" >
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    </ScrollView>
+
+    </LinearLayout>
 
 </LinearLayout>

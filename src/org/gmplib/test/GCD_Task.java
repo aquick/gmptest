@@ -1,27 +1,19 @@
 package org.gmplib.test;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.gmplib.gmpjni.GMP;
 import org.gmplib.gmpjni.GMP.mpz_t;
 import org.gmplib.gmpjni.GMP.GMPException;
 import org.gmplib.gmpjni.GMP.randstate_t;
-//import java.io.IOException;
 
-public class GCD_Task extends AsyncTask<Integer, Integer, Integer> {
+public class GCD_Task extends TaskBase implements Runnable {
 
     private static final String TAG = "GCD_Task";
     
-    private UI uinterface;
-    private RandomNumberFile rng;
-    
-    public GCD_Task(UI ui, RandomNumberFile rng)
+    public GCD_Task(UI ui)
     {
-        super();
-        this.uinterface = ui;
-        this.rng = rng;
-        failmsg = null;
+        super(ui, TAG);
     }
 
     private static final int HGCD_REDUCE_THRESHOLD = 4284; //from mpn\arm\v7a\cora9\gmp-mparam.h
@@ -363,7 +355,7 @@ public class GCD_Task extends AsyncTask<Integer, Integer, Integer> {
         }
     }
 
-    protected Integer doInBackground(Integer... params)
+    public void run()
     {
         mpz_t op1;
         mpz_t op2;
@@ -385,15 +377,20 @@ public class GCD_Task extends AsyncTask<Integer, Integer, Integer> {
         long seed;
         int ret = 0;
 
+        if (!isActive()) {
+            return;
+        }
+        onPreExecute();
         try {
-            GMP.init();
             //tests_start ();
             
-            seed = rng.nextInt();
+            seed = uinterface.getSeed();
             if (seed < 0) {
                 seed = 0x100000000L + seed;
             }
-            Log.d(TAG, "seed=" + seed);
+            String str = "seed=" + seed;
+            Log.d(TAG, str);
+            uinterface.display(str);
             rands = new randstate_t(seed);
 
             if (params.length > 0) {
@@ -463,9 +460,11 @@ public class GCD_Task extends AsyncTask<Integer, Integer, Integer> {
 
                 one_test (op1, op2, ref, i, gcd1, gcd2, temp1, temp2, temp3, s);
                 
-                if (isCancelled()) break;
+                if (Thread.interrupted()) {
+                    throw new Exception("Task cancelled");
+                }
                 if (i % 10 == 0) {
-                    publishProgress(new Integer((int)((float)(i+1)*100.0/(float)reps)));
+                    onProgressUpdate(Integer.valueOf((int)((float)(i+1)*100.0/(float)reps)));
                 }
             }
         }
@@ -477,39 +476,8 @@ public class GCD_Task extends AsyncTask<Integer, Integer, Integer> {
             failmsg = e.getMessage();
             ret = -1;
         }
-        return ret;
+        onPostExecute(Integer.valueOf(ret));
     }
-
-    protected void onPreExecute()
-    {
-        uinterface.display(TAG);
-    }
-
-    protected void onProgressUpdate(Integer... progress)
-    {
-        uinterface.display("progress=" + progress[0]);
-    }
-
-    protected void onPostExecute(Integer result)
-    {
-        uinterface.display("result=" + result);
-        if (result == 0) {
-            uinterface.display("PASS");
-            uinterface.nextTask();
-        } else {
-            uinterface.display(failmsg);
-            uinterface.display("FAIL");
-        }
-    }
-
-    protected void onCancelled(Integer result)
-    {
-        uinterface.display("result=" + result);
-        uinterface.display(failmsg);
-        uinterface.display("FAIL");
-    }
-
-    private String failmsg;
 
     private void dump_abort(String msg, mpz_t a, mpz_t b, mpz_t want, mpz_t got)
         throws Exception

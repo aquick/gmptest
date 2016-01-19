@@ -1,28 +1,21 @@
 package org.gmplib.test;
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import org.gmplib.gmpjni.GMP;
 import org.gmplib.gmpjni.GMP.mpz_t;
 import org.gmplib.gmpjni.GMP.randstate_t;
 import org.gmplib.gmpjni.GMP.GMPException;
-//import java.io.IOException;
+
 import java.math.BigInteger;
 
-public class Mul_Task extends AsyncTask<Integer, Integer, Integer>
+public class Mul_Task extends TaskBase implements Runnable
 {
     private static final String TAG = "Mul_Task";
     
-    private UI uinterface;
-    private RandomNumberFile rng;
-    
-    public Mul_Task(UI ui, RandomNumberFile rng)
+    public Mul_Task(UI ui)
     {
-        super();
-        this.uinterface = ui;
-        this.rng = rng;
-        failmsg = null;
+        super(ui, TAG);
     }
 
     private static final long FFT_MIN_BITSIZE = 100000;
@@ -66,7 +59,7 @@ public class Mul_Task extends AsyncTask<Integer, Integer, Integer>
 
     }
 
-    protected Integer doInBackground(Integer... params)
+    public void run()
     {
         int reps = 20;
         int i;
@@ -81,15 +74,20 @@ public class Mul_Task extends AsyncTask<Integer, Integer, Integer>
         long seed;
         int ret = 0;
 
+        if (!isActive()) {
+            return;
+        }
+        onPreExecute();
         try {
-            GMP.init();
             //tests_start ();
             
-            seed = rng.nextInt();
+            seed = uinterface.getSeed();
             if (seed < 0) {
                 seed = 0x100000000L + seed;
             }
-            Log.d(TAG, "seed=" + seed);
+            String s = "seed=" + seed;
+            Log.d(TAG, s);
+            uinterface.display(s);
             rands = new randstate_t(seed);
 
             if (params.length > 0) {
@@ -130,10 +128,10 @@ public class Mul_Task extends AsyncTask<Integer, Integer, Integer>
 
                 /* printf ("%d %d\n", SIZ (op1), SIZ (op2)); */
                 one (i, op2, op1);
-                if (isCancelled()) {
+                if (Thread.interrupted()) {
                     throw new Exception("Task cancelled");
                 }
-                publishProgress(new Integer((int)((float)(size_range)*50.0/(float)fft_max_2exp)));
+                onProgressUpdate(Integer.valueOf((int)((float)(size_range)*50.0/(float)fft_max_2exp)));
             }
 
             for (i = -50; i < 0; i++) {
@@ -148,10 +146,10 @@ public class Mul_Task extends AsyncTask<Integer, Integer, Integer>
 
                 /* printf ("%d: %d %d\n", i, SIZ (op1), SIZ (op2)); */
                 one (i, op2, op1);
-                if (isCancelled()) {
+                if (Thread.interrupted()) {
                     throw new Exception("Task cancelled");
                 }
-                publishProgress(101 + i);
+                onProgressUpdate(101 + i);
             }
         }
         catch (GMPException e) {
@@ -162,39 +160,8 @@ public class Mul_Task extends AsyncTask<Integer, Integer, Integer>
             failmsg = e.getMessage();
             ret = -1;
         }
-        return ret;
+        onPostExecute(Integer.valueOf(ret));
     }
-
-    protected void onPreExecute()
-    {
-        uinterface.display(TAG);
-    }
-
-    protected void onProgressUpdate(Integer... progress)
-    {
-        uinterface.display("progress=" + progress[0]);
-    }
-
-    protected void onPostExecute(Integer result)
-    {
-        uinterface.display("result=" + result);
-        if (result == 0) {
-            uinterface.display("PASS");
-            uinterface.nextTask();
-        } else {
-            uinterface.display(failmsg);
-            uinterface.display("FAIL");
-        }
-    }
-
-    protected void onCancelled(Integer result)
-    {
-        uinterface.display("result=" + result);
-        uinterface.display(failmsg);
-        uinterface.display("FAIL");
-    }
-
-    private String failmsg;
 
     private void dump_abort (int i, String msg,
             mpz_t op1, mpz_t op2, mpz_t product, mpz_t ref_product)

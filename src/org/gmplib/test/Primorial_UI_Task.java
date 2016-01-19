@@ -1,27 +1,18 @@
 package org.gmplib.test;
 
-import android.os.AsyncTask;
-import android.util.Log;
+//import android.util.Log;
 
 import org.gmplib.gmpjni.GMP;
 import org.gmplib.gmpjni.GMP.mpz_t;
-import org.gmplib.gmpjni.GMP.randstate_t;
 import org.gmplib.gmpjni.GMP.GMPException;
-//import java.io.IOException;
 
-public class Primorial_UI_Task extends AsyncTask<Integer, Integer, Integer>
+public class Primorial_UI_Task extends TaskBase implements Runnable
 {
     private static final String TAG = "Primorial_UI_Task";
     
-    private UI uinterface;
-    private RandomNumberFile rng;
-    
-    public Primorial_UI_Task(UI ui, RandomNumberFile rng)
+    public Primorial_UI_Task(UI ui)
     {
-        super();
-        this.uinterface = ui;
-        this.rng = rng;
-        failmsg = null;
+        super(ui, TAG);
     }
 
     private static boolean isprime (long t)
@@ -44,7 +35,7 @@ public class Primorial_UI_Task extends AsyncTask<Integer, Integer, Integer>
         return false;
     }
 
-    protected Integer doInBackground(Integer... params)
+    public void run()
     {
         long  n;
         long  limit = 222; // 2222;
@@ -52,8 +43,11 @@ public class Primorial_UI_Task extends AsyncTask<Integer, Integer, Integer>
         mpz_t r;
         int ret = 0;
 
+        if (!isActive()) {
+            return;
+        }
+        onPreExecute();
         try {
-            GMP.init();
             f = new mpz_t();
             r = new mpz_t();
             //tests_start ();
@@ -81,11 +75,11 @@ public class Primorial_UI_Task extends AsyncTask<Integer, Integer, Integer>
                 if (isprime (n+1)) {
                     GMP.mpz_mul_ui (f, f, n+1);  /* p# = (p-1)# * (p) */
                 }
-                if (isCancelled()) {
+                if (Thread.interrupted()) {
                     throw new Exception("Task cancelled");
                 }
                 if (n % 10 == 0) {
-                    publishProgress(new Integer((int)((float)(n+1)*100.0/(float)limit)));
+                    onProgressUpdate(Integer.valueOf((int)((float)(n+1)*100.0/(float)limit)));
                 }
             }
         }
@@ -97,39 +91,8 @@ public class Primorial_UI_Task extends AsyncTask<Integer, Integer, Integer>
             failmsg = e.getMessage();
             ret = -1;
         }
-        return ret;
+        onPostExecute(Integer.valueOf(ret));
     }
-
-    protected void onPreExecute()
-    {
-        uinterface.display(TAG);
-    }
-
-    protected void onProgressUpdate(Integer... progress)
-    {
-        uinterface.display("progress=" + progress[0]);
-    }
-
-    protected void onPostExecute(Integer result)
-    {
-        uinterface.display("result=" + result);
-        if (result == 0) {
-            uinterface.display("PASS");
-            uinterface.nextTask();
-        } else {
-            uinterface.display(failmsg);
-            uinterface.display("FAIL");
-        }
-    }
-
-    protected void onCancelled(Integer result)
-    {
-        uinterface.display("result=" + result);
-        uinterface.display(failmsg);
-        uinterface.display("FAIL");
-    }
-
-    private String failmsg;
 
     private void dump_abort(String msg,
                             mpz_t got, mpz_t want)
