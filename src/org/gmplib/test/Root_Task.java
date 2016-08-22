@@ -16,7 +16,7 @@ public class Root_Task extends TaskBase implements Runnable
         super(ui, TAG);
     }
 
-    private void check_one (mpz_t root1, mpz_t x2, long nth, int i)
+    private void check_one (mpz_t root1, mpz_t x2, long nth, int res, int i)
         throws Exception
     {
         mpz_t temp = new mpz_t();
@@ -38,14 +38,15 @@ public class Root_Task extends TaskBase implements Runnable
         /* Is power of result > argument?  */
         if (GMP.mpz_cmp (root1, root2) != 0 ||
             GMP.mpz_cmp (x2, temp2) != 0 ||
-            GMP.mpz_cmpabs (temp, x2) > 0) {
-            dump_abort("ERROR after test " + i, x2, root1, root2, nth);
+            GMP.mpz_cmpabs (temp, x2) > 0 ||
+            res == GMP.mpz_cmp_ui(rem2, 0)) {
+            dump_abort("ERROR after test " + i, x2, root1, root2, nth, res);
             /***
             fprintf (stderr, "ERROR after test %d\n", i);
             debug_mp (x2, 10);
             debug_mp (root1, 10);
             debug_mp (root2, 10);
-            fprintf (stderr, "nth: %lu\n", nth);
+            fprintf (stderr, "nth: %lu, res:%i\n", nth, res);
             abort ();
             ***/
         }
@@ -87,6 +88,7 @@ public class Root_Task extends TaskBase implements Runnable
         mpz_t root1;
         long x2_size;
         int i;
+        int res;
         int reps = 50; // 500;
         randstate_t rands;
         mpz_t bs;
@@ -121,8 +123,8 @@ public class Root_Task extends TaskBase implements Runnable
 
             /* This triggers a gcc 4.3.2 bug */
             GMP.mpz_set_str (x2, "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80000000000000000000000000000000000000000000000000000000000000002", 16);
-            GMP.mpz_root (root1, x2, 2);
-            check_one (root1, x2, 2, -1);
+            res = GMP.mpz_root (root1, x2, 2);
+            check_one (root1, x2, 2, res, -1);
 
             for (i = 0; i < reps; i++) {
                 GMP.mpz_urandomb (bs, rands, 32);
@@ -135,7 +137,7 @@ public class Root_Task extends TaskBase implements Runnable
                 GMP.mpz_urandomb (bs, rands, 15);
                 nth = GMP.mpz_getlimbn (bs, 0) % GMP.mpz_sizeinbase (x2, 2) + 2;
 
-                GMP.mpz_root (root1, x2, nth);
+                res = GMP.mpz_root (root1, x2, nth);
 
                 GMP.mpz_urandomb (bs, rands, 4);
                 bsi = GMP.mpz_get_ui (bs);
@@ -148,15 +150,15 @@ public class Root_Task extends TaskBase implements Runnable
                     } else {
                         GMP.mpz_add_ui (x2, x2, bsi >> 2);
                     }
-                    GMP.mpz_root (root1, x2, nth);
+                    res = GMP.mpz_root (root1, x2, nth);
                 }
 
-                check_one (root1, x2, nth, i);
+                check_one (root1, x2, nth, res, i);
 
                 if (((nth & 1) != 0) && ((bsi & 2) != 0)) {
                     GMP.mpz_neg (x2, x2);
                     GMP.mpz_neg (root1, root1);
-                    check_one (root1, x2, nth, i);
+                    check_one (root1, x2, nth, res, i);
                 }
                 if (Thread.interrupted()) {
                     throw new Exception("Task cancelled");
@@ -177,7 +179,7 @@ public class Root_Task extends TaskBase implements Runnable
         onPostExecute(Integer.valueOf(ret));
     }
 
-    private void dump_abort(String msg, mpz_t x2, mpz_t root1, mpz_t root2, long nth)
+    private void dump_abort(String msg, mpz_t x2, mpz_t root1, mpz_t root2, long nth, int res)
         throws Exception
     {
         String x2_str = "";
@@ -203,7 +205,7 @@ public class Root_Task extends TaskBase implements Runnable
             root2_str = "GMPException [" + e.getCode() + "] " + e.getMessage();
         }
         emsg = msg + " x2=" + x2_str + " root1=" + root1_str + " root2=" + root2_str +
-               " nth=" + nth;
+               " nth=" + nth + " res=" + res;
         throw new Exception(emsg);
     }
 

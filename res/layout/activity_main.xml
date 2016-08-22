@@ -14,6 +14,13 @@
         android:layout_weight="1" />
     
     <Button
+        android:id="@+id/Button04"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:text="@string/mpq_tests"
+        android:layout_weight="1" />
+    
+    <Button
         android:id="@+id/Button02"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -31,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="8" >
+        android:layout_weight="7" >
 
     <ProgressBar
         android:id="@+id/Progress01"
@@ -55,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="8" >
+        android:layout_weight="7" >
 
     <ProgressBar
         android:id="@+id/Progress02"

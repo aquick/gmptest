@@ -411,14 +411,14 @@ public class AddOrSubMul_Task extends TaskBase implements Runnable {
         y = new mpz_t();
 
         for (i = 0; i < reps; i++) {
-            TestUtil.mpz_errandomb (w, rands, 5*GMP.GMP_LIMB_BITS);
-            TestUtil.mpz_errandomb (x, rands, 5*GMP.GMP_LIMB_BITS);
-            TestUtil.mpz_errandomb (y, rands, 5*GMP.GMP_LIMB_BITS);
+            TestUtil.mpz_errandomb (w, rands, 5*GMP.GMP_LIMB_BITS());
+            TestUtil.mpz_errandomb (x, rands, 5*GMP.GMP_LIMB_BITS());
+            TestUtil.mpz_errandomb (y, rands, 5*GMP.GMP_LIMB_BITS());
             check_all (w, x, y);
             check_all_inplace (w, y);
 
-            TestUtil.mpz_errandomb (w, rands, 5*GMP.GMP_LIMB_BITS);
-            TestUtil.mpz_errandomb (x, rands, 5*GMP.GMP_LIMB_BITS);
+            TestUtil.mpz_errandomb (w, rands, 5*GMP.GMP_LIMB_BITS());
+            TestUtil.mpz_errandomb (x, rands, 5*GMP.GMP_LIMB_BITS());
             TestUtil.mpz_errandomb (y, rands, 32 /*BITS_PER_ULONG*/);
             check_all (w, x, y);
             check_all_inplace (w, y);

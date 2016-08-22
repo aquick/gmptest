@@ -77,7 +77,7 @@ public class LucNum_UI_Task extends TaskBase implements Runnable
 
     public void run()
     {
-        long  limit = 100 * 32; // * GMP_LIMB_BITS;
+        long  limit = 100 * GMP.GMP_LIMB_BITS();
         int ret = 0;
 
         if (!isActive()) {

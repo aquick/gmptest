@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">GMP Test Application</string>
     <string name="mpz_tests">mpz tests</string>
+    <string name="mpq_tests">mpq tests</string>
     <string name="cancel">cancel</string>
     <string name="clear">clear</string>
     <string name="testing">Testing GMP version</string>

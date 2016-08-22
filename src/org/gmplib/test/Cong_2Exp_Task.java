@@ -123,12 +123,12 @@ public class Cong_2Exp_Task extends TaskBase implements Runnable {
         rc = new mpz_t();
 
         for (i = 0; i < reps; i++) {
-            TestUtil.mpz_errandomb (a, rands, 8*GMP.GMP_LIMB_BITS);
-            TestUtil.mpz_errandomb (c, rands, 8*GMP.GMP_LIMB_BITS);
-            d = TestUtil.urandom(rands) % (8*GMP.GMP_LIMB_BITS);
+            TestUtil.mpz_errandomb (a, rands, 8*GMP.GMP_LIMB_BITS());
+            TestUtil.mpz_errandomb (c, rands, 8*GMP.GMP_LIMB_BITS());
+            d = TestUtil.urandom(rands) % (8*GMP.GMP_LIMB_BITS());
 
-            GMP.mpz_mul_2exp (a, a, TestUtil.urandom(rands) % (2*GMP.GMP_LIMB_BITS));
-            GMP.mpz_mul_2exp (c, c, TestUtil.urandom(rands) % (2*GMP.GMP_LIMB_BITS));
+            GMP.mpz_mul_2exp (a, a, TestUtil.urandom(rands) % (2*GMP.GMP_LIMB_BITS()));
+            GMP.mpz_mul_2exp (c, c, TestUtil.urandom(rands) % (2*GMP.GMP_LIMB_BITS()));
 
             TestUtil.mpz_negrandom (a, rands);
             TestUtil.mpz_negrandom (c, rands);
@@ -163,7 +163,7 @@ public class Cong_2Exp_Task extends TaskBase implements Runnable {
         long ec;
         long en;
         long d;
-        long m = 10 * GMP.GMP_LIMB_BITS;
+        long m = 10 * GMP.GMP_LIMB_BITS();
         mpz_t  a;
         mpz_t  c;
         int    i;

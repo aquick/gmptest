@@ -18,10 +18,8 @@ public class Set_F_Task extends TaskBase implements Runnable
         super(ui, TAG);
     }
 
-    private static final int GMP_LIMB_BITS = 32;
-
     private static final int[] shift = new int[] {
-        0, 1, GMP_LIMB_BITS, 2*GMP_LIMB_BITS, 5*GMP_LIMB_BITS
+        0, 1, GMP.GMP_LIMB_BITS(), 2*GMP.GMP_LIMB_BITS(), 5*GMP.GMP_LIMB_BITS()
     };
 
     private void check_one (mpz_t z)
@@ -105,10 +103,10 @@ public class Set_F_Task extends TaskBase implements Runnable
             GMP.mpz_set_si (z, 123);
             check_one (z);
 
-            GMP.mpz_rrandomb (z, rands, 2*GMP_LIMB_BITS);
+            GMP.mpz_rrandomb (z, rands, 2*GMP.GMP_LIMB_BITS());
             check_one (z);
 
-            GMP.mpz_rrandomb (z, rands, 5*GMP_LIMB_BITS);
+            GMP.mpz_rrandomb (z, rands, 5*GMP.GMP_LIMB_BITS());
             check_one (z);
         }
         catch (GMPException e) {

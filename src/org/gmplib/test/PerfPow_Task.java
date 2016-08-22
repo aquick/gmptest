@@ -133,7 +133,7 @@ public class PerfPow_Task extends TaskBase implements Runnable
         int j;
         int k;
         int unique;
-        int destroy;
+        int destroy = 0;
         int res;
         int nrprimes;
         long primebits;
@@ -181,7 +181,7 @@ public class PerfPow_Task extends TaskBase implements Runnable
                     destroy = 1;
                 } else {
                     GMP.mpz_urandomb (np, rands, 32);
-                    destroy = (int)(GMP.mpz_get_ui (np) % (nrprimes - 2) + 1);
+                    destroy = (int)(GMP.mpz_get_ui (np) % (nrprimes - 2));
                 }
 
                 g = exp[destroy];
@@ -228,12 +228,14 @@ public class PerfPow_Task extends TaskBase implements Runnable
                     ***/
                 }
             } else {
-                if (res == 1) {
+                if (res == 1 && destroy != 0) {
                     dump_abort2("n was destroyed, but perfpow_p still believes n is a perfect power", n);
                     /***
                     gmp_printf("n = %Zu\nn was destroyed, but perfpow_p still believes n is a perfect power\n", n);
                     abort ();
                     ***/
+                } else if (res == 0 && destroy == 0) {
+                    dump_abort2("n is a perfect power, perfpow_p disagrees", n);
                 }
             }
             if (Thread.interrupted()) {

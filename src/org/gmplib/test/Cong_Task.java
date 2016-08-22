@@ -198,7 +198,7 @@ public class Cong_Task extends TaskBase implements Runnable {
             check_one (a, c, d, 1);
 
             if (TestUtil.mpz_pow2abs_p (d) == 0) {
-                GMP.mpz_combit (a, TestUtil.urandom(rands) % (8*GMP.GMP_LIMB_BITS)); // TODO
+                GMP.mpz_combit (a, TestUtil.urandom(rands) % (8*GMP.GMP_LIMB_BITS())); // TODO
                 check_one (a, c, d, 0);
             }
             if (Thread.interrupted()) {

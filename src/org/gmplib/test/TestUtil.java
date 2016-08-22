@@ -224,11 +224,22 @@ public class TestUtil
         if (GMP.mpz_cmp_si(n, 0) != 0) GMP.mpz_neg (rop, rop);
     }
     
+    public static void mpz_rrandomb_signed (mpz_t rop, randstate_t rstate, long size)
+        throws GMPException
+    {
+	if (size >= 0) {
+	    GMP.mpz_rrandomb(rop, rstate, size);
+	} else {
+	    GMP.mpz_rrandomb(rop, rstate, -size);	    
+	    GMP.mpz_neg (rop, rop);
+	}
+    }
+	    
     public static long urandom(randstate_t rstate)
         throws GMPException
     {
         mpz_t r = new mpz_t();
-        GMP.mpz_urandomb(r,  rstate, GMP.GMP_LIMB_BITS);
+        GMP.mpz_urandomb(r,  rstate, GMP.GMP_LIMB_BITS());
         return GMP.mpz_get_ui(r);
     }
     
@@ -357,5 +368,10 @@ public class TestUtil
     public static final long fib_table(int i)
     {
         return _fib_table[i+1];
+    }
+
+    public static int SGN(int x)
+    {
+	return ((x) < 0 ? -1 : (x) > 0 ? 1 : 0);
     }
 }

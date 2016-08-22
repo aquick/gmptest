@@ -35,7 +35,8 @@ public class MainActivity extends Activity implements UI {
     private ArrayBlockingQueue<Runnable> mThreadWorkQueue;
 
     private TextView[] mView;
-    private Button mButton;
+    private Button mTestMpz;
+    private Button mTestMpq;
     private Button mCancel;
     private Button mClear;
     private ProgressBar[] mProgress;
@@ -351,6 +352,48 @@ public class MainActivity extends Activity implements UI {
 	}
     }
     
+    protected void initMpqTasks()
+    {
+        numTasks = 0;
+        if (mWakeLock != null && !mWakeLock.isHeld()) {
+            mWakeLock.acquire();
+        }
+        try {
+            initLog();
+            display(getString(R.string.testing) + " " + GMP.getVersion());
+            initRandom();
+            mThreadWorkQueue = new ArrayBlockingQueue<Runnable>(MAX_NUM_TASKS);
+            NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+            mThreadPool = new ThreadPoolExecutor(
+                    NUMBER_OF_CORES,       // Initial pool size
+                    NUMBER_OF_CORES,       // Max pool size
+                    KEEP_ALIVE_TIME,
+                    KEEP_ALIVE_TIME_UNIT,
+                    mThreadWorkQueue);
+            tasks = new TaskBase[MAX_NUM_TASKS];
+            tasks[numTasks++] = new Mpq_AOrS_Task(this);
+            tasks[numTasks++] = new Mpq_Cmp_SI_Task(this);
+            tasks[numTasks++] = new Mpq_Cmp_Task(this);
+            /***/
+            tasks[numTasks++] = new Mpq_Cmp_UI_Task(this);
+            tasks[numTasks++] = new Mpq_Cmp_Z_Task(this);
+            tasks[numTasks++] = new Mpq_Equal_Task(this);
+            tasks[numTasks++] = new Mpq_Set_F_Task(this);
+            tasks[numTasks++] = new Mpq_Set_Str_Task(this);
+            tasks[numTasks++] = new Mpq_MulDiv_2Exp_Task(this);
+            tasks[numTasks++] = new Mpq_Inv_Task(this);
+            /***/
+            for (int i = 0; i < numTasks; i++) {
+                mThreadPool.execute((Runnable)tasks[i]);
+            }
+            startMonitorThread();
+        }
+	catch (IOException e) {
+            Log.d(TAG, "EXCEPTION: " + e.toString());	    
+            display("EXCEPTION: " + e.toString());
+	}
+    }
+    
     protected void cancelAllTasks()
     {
 	if (tasks == null) return;
@@ -443,7 +486,8 @@ public class MainActivity extends Activity implements UI {
         mView = new TextView[2];
         mView[0] = (TextView) findViewById(R.id.TextView01);
         mView[1] = (TextView) findViewById(R.id.TextView02);
-        mButton = (Button) findViewById(R.id.Button01);
+        mTestMpz = (Button) findViewById(R.id.Button01);
+        mTestMpq = (Button) findViewById(R.id.Button04);
         mCancel = (Button) findViewById(R.id.Button02);
         mClear = (Button) findViewById(R.id.Button03);
         mProgress = new ProgressBar[2];
@@ -453,11 +497,18 @@ public class MainActivity extends Activity implements UI {
         try {
             GMP.init();
             TestUtil.initprimes(65535);
-            mButton.setOnClickListener(
+            mTestMpz.setOnClickListener(
                     new View.OnClickListener() {
                         public void onClick(View v)
                         {
                             MainActivity.this.initTasks();
+                        }
+                    });
+            mTestMpq.setOnClickListener(
+                    new View.OnClickListener() {
+                        public void onClick(View v)
+                        {
+                            MainActivity.this.initMpqTasks();
                         }
                     });
             mCancel.setOnClickListener(

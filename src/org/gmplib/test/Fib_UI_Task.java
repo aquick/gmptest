@@ -17,12 +17,12 @@ public class Fib_UI_Task extends TaskBase implements Runnable {
 
     private static long MPZ_FIB_SIZE_FLOAT(int n)
     {
-        return (long) ((float)n * 0.6942419 / GMP.GMP_NUMB_BITS + 1);
+        return (long) ((float)n * 0.6942419 / GMP.GMP_NUMB_BITS() + 1);
     }
 
     private static long MPN_FIB2_SIZE(int n)
     {
-        return (long) (n/32 * 23 / GMP.GMP_NUMB_BITS) + 4;
+        return (long) (n/32 * 23 / GMP.GMP_NUMB_BITS()) + 4;
     }
 
 
@@ -56,7 +56,7 @@ public class Fib_UI_Task extends TaskBase implements Runnable {
     public void run()
     {
         int   n;
-        int   limit = 100 * GMP.GMP_LIMB_BITS;
+        int   limit = 100 * GMP.GMP_LIMB_BITS();
         int   ret = 0;
         mpz_t          want_fn;
         mpz_t          want_fn1;

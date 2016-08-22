@@ -452,7 +452,7 @@ public class GCD_Task extends TaskBase implements Runnable {
                    quotients.  */
 
                 GMP.mpz_urandomb (bs, rands, 32);
-                chain_len = (int)(GMP.mpz_get_ui (bs) % TestUtil.log2c (GMP.GMP_NUMB_BITS * MAX_SCHOENHAGE_THRESHOLD));
+                chain_len = (int)(GMP.mpz_get_ui (bs) % TestUtil.log2c (GMP.GMP_NUMB_BITS() * MAX_SCHOENHAGE_THRESHOLD));
                 GMP.mpz_urandomb (bs, rands, 32);
                 chain_len = (int)(GMP.mpz_get_ui (bs) % (1 << chain_len) / 32);
 

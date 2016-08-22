@@ -68,9 +68,17 @@ public class SqrtRem_Task extends TaskBase implements Runnable
 
                 /* printf ("%ld\n", SIZ (x2)); */
 
+                GMP.mpz_sqrt(temp, x2);
+                GMP.mpz_internal_CHECK_FORMAT (temp);                
+                
                 GMP.mpz_sqrtrem (x, rem, x2);
                 GMP.mpz_internal_CHECK_FORMAT (x);
                 GMP.mpz_internal_CHECK_FORMAT (rem);
+                
+                /* Are results different? */
+                if (GMP.mpz_cmp(temp,  x) != 0) {
+                    dump_abort (x2, x, rem);
+                }
 
                 GMP.mpz_mul (temp, x, x);
 

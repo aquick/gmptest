@@ -278,9 +278,9 @@ public class Jacobi_Task extends TaskBase implements Runnable
 
     private static final long[]  ktable = new long[] {
         0, 1, 2, 3, 4, 5, 6, 7,
-        GMP.GMP_NUMB_BITS-1, GMP.GMP_NUMB_BITS, GMP.GMP_NUMB_BITS+1,
-        2*GMP.GMP_NUMB_BITS-1, 2*GMP.GMP_NUMB_BITS, 2*GMP.GMP_NUMB_BITS+1,
-        3*GMP.GMP_NUMB_BITS-1, 3*GMP.GMP_NUMB_BITS, 3*GMP.GMP_NUMB_BITS+1
+        GMP.GMP_NUMB_BITS()-1, GMP.GMP_NUMB_BITS(), GMP.GMP_NUMB_BITS()+1,
+        2*GMP.GMP_NUMB_BITS()-1, 2*GMP.GMP_NUMB_BITS(), 2*GMP.GMP_NUMB_BITS()+1,
+        3*GMP.GMP_NUMB_BITS()-1, 3*GMP.GMP_NUMB_BITS(), 3*GMP.GMP_NUMB_BITS()+1
     };
 
     /* Try (a/b*2^k) for various k. */

@@ -24,7 +24,7 @@ public class PopCount_Task extends TaskBase implements Runnable
         long  got;
 
         n = new mpz_t();
-        for (i = 0; i < 5 * GMP.GMP_LIMB_BITS; i++) {
+        for (i = 0; i < 5 * GMP.GMP_LIMB_BITS(); i++) {
             GMP.mpz_setbit (n, i);
             got = GMP.mpz_popcount (n);
             if (got != 1) {

@@ -154,10 +154,10 @@ public class Div_2Exp_Task extends TaskBase implements Runnable {
 
     private static final long[]  table = new long[] {
         0, 1, 2, 3, 4, 5,
-        GMP.GMP_NUMB_BITS-1, GMP.GMP_NUMB_BITS, GMP.GMP_NUMB_BITS+1,
-        2*GMP.GMP_NUMB_BITS-1, 2*GMP.GMP_NUMB_BITS, 2*GMP.GMP_NUMB_BITS+1,
-        3*GMP.GMP_NUMB_BITS-1, 3*GMP.GMP_NUMB_BITS, 3*GMP.GMP_NUMB_BITS+1,
-        4*GMP.GMP_NUMB_BITS-1, 4*GMP.GMP_NUMB_BITS, 4*GMP.GMP_NUMB_BITS+1
+        GMP.GMP_NUMB_BITS()-1, GMP.GMP_NUMB_BITS(), GMP.GMP_NUMB_BITS()+1,
+        2*GMP.GMP_NUMB_BITS()-1, 2*GMP.GMP_NUMB_BITS(), 2*GMP.GMP_NUMB_BITS()+1,
+        3*GMP.GMP_NUMB_BITS()-1, 3*GMP.GMP_NUMB_BITS(), 3*GMP.GMP_NUMB_BITS()+1,
+        4*GMP.GMP_NUMB_BITS()-1, 4*GMP.GMP_NUMB_BITS(), 4*GMP.GMP_NUMB_BITS()+1
     };
 
     private void check_various ()

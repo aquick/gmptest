@@ -82,20 +82,19 @@ public class Fac_UI_Task extends TaskBase implements Runnable {
                     onProgressUpdate(Integer.valueOf((int)((float)(n+1)*100.0/(float)limit)));
                 }
             }
-            n = 1048573; /* a prime */
-            GMP.mpz_fac_ui (f, (long)n - 1);
-            long mm = GMP.mpz_fdiv_ui (f, (long)n);
-            if (mm > Integer.MAX_VALUE) {
-                dump_abort ("mpz_fac_ui(" + Integer.toString(n-1) + ") wrong\n" +
-                        "  Wilson's theorem not verified: got " + mm + ", expected " + Integer.toString(n-1) + ".");
-            }
+            n = 2097169; /* a prime = 1 mod 4*/
+            GMP.mpz_fac_ui (f, (long)(n / 2)); /* ((n-1)/2)! */
+            long mm = GMP.mpz_fdiv_ui (f, (long)n); /* ((n-1)/2)! mod n*/
+            GMP.mpz_set_ui (f, mm);
+            GMP.mpz_mul_ui (f, f, mm); /* (((n-1)/2)!)^2 */
+            mm = GMP.mpz_fdiv_ui (f, (long)n); /* (((n-1)/2)!)^2 mod n*/
             m = (int)mm;
             if (m != n - 1) {
-                dump_abort ("mpz_fac_ui(" + Integer.toString(n-1) + ") wrong\n" +
-                    "  Wilson's theorem not verified: got " + m + ", expected " + Integer.toString(n-1) + ".");
+                dump_abort ("mpz_fac_ui(" + Integer.toString(n/2) + ") wrong\n" +
+                    "  al-Haytham's theorem not verified: got " + m + ", expected " + Integer.toString(n-1) + ".");
                 /***
-                printf ("mpz_fac_ui(%lu) wrong\n", n - 1);
-                printf ("  Wilson's theorem not verified: got %lu, expected %lu.\n",m ,n - 1);
+                printf ("mpz_fac_ui(%lu) wrong\n", n / 2);
+                printf (" al-Haytham's theorem not verified: got %lu, expected %lu.\n", m, n - 1);
                 abort ();
                 ***/
             }

@@ -70,8 +70,8 @@ public class HamDist_Task extends TaskBase implements Runnable
         mpz_t x = new mpz_t();
         mpz_t y = new mpz_t();
 
-        for (i = 0; i < 5 * GMP.GMP_NUMB_BITS; i++) {
-            for (j = 0; j < 5 * GMP.GMP_NUMB_BITS; j++) {
+        for (i = 0; i < 5 * GMP.GMP_NUMB_BITS(); i++) {
+            for (j = 0; j < 5 * GMP.GMP_NUMB_BITS(); j++) {
                 GMP.mpz_set_ui (x, 0L);
                 GMP.mpz_setbit (x, i);
                 GMP.mpz_set_ui (y, 0L);
@@ -121,13 +121,13 @@ public class HamDist_Task extends TaskBase implements Runnable
         mpz_t y = new mpz_t();
 
         for (i = 0; i < reps; i++) {
-            TestUtil.mpz_erandomb (x, rands, 6 * GMP.GMP_NUMB_BITS);
+            TestUtil.mpz_erandomb (x, rands, 6 * GMP.GMP_NUMB_BITS());
             TestUtil.mpz_negrandom (x, rands);
-            GMP.mpz_mul_2exp (x, x, TestUtil.urandom(rands) % (4 * GMP.GMP_NUMB_BITS));
+            GMP.mpz_mul_2exp (x, x, TestUtil.urandom(rands) % (4 * GMP.GMP_NUMB_BITS()));
 
-            TestUtil.mpz_erandomb (y, rands, 6 * GMP.GMP_NUMB_BITS);
+            TestUtil.mpz_erandomb (y, rands, 6 * GMP.GMP_NUMB_BITS());
             TestUtil.mpz_negrandom (y, rands);
-            GMP.mpz_mul_2exp (y, y, TestUtil.urandom(rands) % (4 * GMP.GMP_NUMB_BITS));
+            GMP.mpz_mul_2exp (y, y, TestUtil.urandom(rands) % (4 * GMP.GMP_NUMB_BITS()));
 
             want = refmpz_hamdist (x, y);
             got = GMP.mpz_hamdist (x, y);

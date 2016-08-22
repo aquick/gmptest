@@ -19,7 +19,7 @@ public class Scan_Task extends TaskBase implements Runnable
     private long refmpz_scan (mpz_t z, long i, int sought)
         throws GMPException
     {
-        long  z_bits = (long) GMP.mpz_internal_ABSIZ(z) * GMP.GMP_NUMB_BITS;
+        long  z_bits = (long) GMP.mpz_internal_ABSIZ(z) * GMP.GMP_NUMB_BITS();
 
         do {
             if (GMP.mpz_tstbit (z, i) == sought) {
@@ -66,7 +66,7 @@ public class Scan_Task extends TaskBase implements Runnable
         z = new mpz_t();
         for (test = 0; test < 5; test++) {
             for (size = 0; size < 5; size++) {
-                GMP.mpz_rrandomb (z, rands, size*GMP.GMP_LIMB_BITS);
+                GMP.mpz_rrandomb (z, rands, size*GMP.GMP_LIMB_BITS());
 
                 for (neg = 0; neg <= 1; neg++) {
                     if (neg != 0) {
@@ -76,11 +76,11 @@ public class Scan_Task extends TaskBase implements Runnable
                     for (isize = 0; isize <= size; isize++) {
                         for (oindex = 0; oindex < offset.length; oindex++) {
                             o = offset[oindex];
-                            if ((int) isize*GMP.GMP_NUMB_BITS < -o) {
+                            if ((int) isize*GMP.GMP_NUMB_BITS() < -o) {
                                 continue;  /* start would be negative */
                             }
 
-                            start = isize*GMP.GMP_NUMB_BITS + o;
+                            start = isize*GMP.GMP_NUMB_BITS() + o;
 
                             for (sought = 0; sought <= 1; sought++) {
                                 if (sought == 0) {

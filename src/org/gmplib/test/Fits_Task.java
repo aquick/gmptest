@@ -119,7 +119,7 @@ public class Fits_Task extends TaskBase implements Runnable {
             }
 
             GMP.mpz_set_ui (z, 1L);
-            GMP.mpz_mul_2exp (z, z, 5L*GMP.GMP_LIMB_BITS);
+            GMP.mpz_mul_2exp (z, z, 5*GMP.GMP_LIMB_BITS());
             expr = "2^(5*BPML)";
             want = 0;
             got = GMP.mpz_fits_ulong_p(z);
