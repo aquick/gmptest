@@ -371,10 +371,10 @@ public class MainActivity extends Activity implements UI {
                     KEEP_ALIVE_TIME_UNIT,
                     mThreadWorkQueue);
             tasks = new TaskBase[MAX_NUM_TASKS];
+            /***/
             tasks[numTasks++] = new Mpq_AOrS_Task(this);
             tasks[numTasks++] = new Mpq_Cmp_SI_Task(this);
             tasks[numTasks++] = new Mpq_Cmp_Task(this);
-            /***/
             tasks[numTasks++] = new Mpq_Cmp_UI_Task(this);
             tasks[numTasks++] = new Mpq_Cmp_Z_Task(this);
             tasks[numTasks++] = new Mpq_Equal_Task(this);
@@ -382,6 +382,11 @@ public class MainActivity extends Activity implements UI {
             tasks[numTasks++] = new Mpq_Set_Str_Task(this);
             tasks[numTasks++] = new Mpq_MulDiv_2Exp_Task(this);
             tasks[numTasks++] = new Mpq_Inv_Task(this);
+            tasks[numTasks++] = new Mpq_Get_D_Task(this);
+            /***/
+            tasks[numTasks++] = new Mpq_Get_Str_Task(this);
+            /***/
+            tasks[numTasks++] = new Mpq_Input_Str_Task(this);
             /***/
             for (int i = 0; i < numTasks; i++) {
                 mThreadPool.execute((Runnable)tasks[i]);

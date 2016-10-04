@@ -160,6 +160,7 @@ public class Mul_Task extends TaskBase implements Runnable
             failmsg = e.getMessage();
             ret = -1;
         }
+        Log.d(TAG, "done");
         onPostExecute(Integer.valueOf(ret));
     }
 
